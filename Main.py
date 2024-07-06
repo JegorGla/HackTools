@@ -25,10 +25,10 @@ HackToolChoice = input('Enter your number: ')
 
 if HackToolChoice == '1':
     try:
-        with open('Phishing/MainPhishing.py', 'r') as file:
-            os.system('clear')
+        with open('Phishing/MainPhishing.py', 'r', encoding='utf-8') as file:
+            os.system('cls')
             exec(file.read())
     except FileNotFoundError:
-        print("Файл не найден.")
+        print("Файл Main Phishing не найден.")
     except Exception as e:
         print(f"Произошла ошибка при выполнении файла: {e}")
