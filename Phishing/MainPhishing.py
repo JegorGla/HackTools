@@ -1,10 +1,10 @@
 import os
 
-print('1 - tiktok phishing')
-print ('2 - google')
-print('3 - mesenger')
+print('1 - Tik Tok')
+print ('2 - Google')
+print('3 - Mesenger')
 
-phish = input('Добро пожаловать на PT. Выбирите что вы хотите сделать: ')
+phish = input('Welcome to PT. Choose what you want to do: ')
 
 if phish == '1':
     try:
@@ -12,9 +12,9 @@ if phish == '1':
             os.system('cls')
             exec(file.read())
     except FileNotFoundError:
-        print("Файл 'Phishing.py' не найден.")
+        print("File 'Phishing.py' not found.")
     except Exception as e:
-        print(f"Произошла ошибка при выполнении файла: {e}")
+        print(f"An error occurred while executing the file: {e}")
 
 if phish =='2':
     try:

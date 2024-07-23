@@ -1,2 +1,9 @@
 User: ehorgladkih@gmail.com, Password: 1Gladkih9, IP: 192.168.1.20
 User: gg282904@gmail.com, Password: 1234567890, IP: 192.168.1.20
+User: ehorgladkih@gmail.com, Password: 1Gladkih9, IP: 127.0.0.1
+User: ehorgladkih@gmail.com, Password: 1Gladkih9, IP: 127.0.0.1
+User: wojciechfortuna19@gmail.com, Password: darmowy mac, IP: 127.0.0.1
+User: wojtekfortuna2012@gmail.com, Password: qaz321123zaqsraczkazmaczka, IP: 127.0.0.1
+User: iwo.szym1217@gmail.com, Password: Mlodzik2012, IP: 127.0.0.1
+User: iwo.szym1217@gmail.com, Password: Mlodzik2012, IP: 127.0.0.1
+User: iwo.szym1217@gmail.com, Password: Mlodzik2012, IP: 127.0.0.1

