@@ -1,6 +1,6 @@
 import os
 import pyfiglet
-from colorama import init, Fore
+from colorama import init, Fore, Style
 import sys
 
 # Инициализируем colorama для поддержки цветового вывода
@@ -12,7 +12,7 @@ def gradient_color(text):
     gradient_text = ""
     for i, char in enumerate(text):
         gradient_text += colors[i % len(colors)] + char
-    return gradient_text
+    return gradient_text + Style.RESET_ALL
 
 # Функция для сохранения имени в файл
 def save_name_to_file(name, filename="name.txt"):
@@ -26,7 +26,28 @@ def load_name_from_file(filename="name.txt"):
             return f.read().strip()
     return None
 
-# Выводим заголовок с плавным переходом цвета
+# Функция для отображения главного меню
+def display_menu():
+    os.system('cls' if os.name == 'nt' else 'clear')  # Очистка экрана
+    print(gradient_color(pyfiglet.figlet_format("ALL HACKING TOOLS", font='starwars')))
+    print(Fore.GREEN + Style.BRIGHT + "Welcome to the Hacking Tools Menu" + Style.RESET_ALL)
+    print(Fore.CYAN + Style.BRIGHT + "-" * 50 + Style.RESET_ALL)
+    print(Fore.YELLOW + Style.BRIGHT + "Available Tools:" + Style.RESET_ALL)
+    tools = [
+        "1 - Phishing tool",
+        "2 - PhoneNumber Picker",
+        "3 - DDoS Attack",
+        "4 - Trojan Program (for Windows)",
+        "5 - IpPicker",
+        "6 - QRCode Generation",
+        "7 - Find User",
+        "8 - Exit"
+    ]
+    for tool in tools:
+        print(f"    {tool}")
+    print(Fore.CYAN + Style.BRIGHT + "-" * 50 + Style.RESET_ALL)
+
+# Выводим заголовок и приветственное сообщение
 print(gradient_color(pyfiglet.figlet_format("ALL HACKING TOOLS", font='starwars')))
 
 # Проверяем, есть ли сохраненное имя
@@ -39,67 +60,42 @@ else:
     save_name_to_file(name)
     print(f'Hello, {name}')
 
-print('1 - phishing tool')
-print('2 - PhoneNumber Picker')
-print('3 - DDoS Attack')
-print('4 - Trojan Program (for Windows)')
-print('5 - IpPicker')
-print('6 - Exit')
+# Отображаем меню
+display_menu()
 
+# Получаем выбор пользователя
 HackToolChoice = input('Enter your number: ')
 
-if HackToolChoice == '1':
-    try:
-        with open('Phishing/MainPhishing.py', 'r', encoding='utf-8') as file:
-            os.system('cls')
-            exec(file.read())
-    except FileNotFoundError:
-        print("Main Phishing file not found.")
-    except Exception as e:
-        print(f"An error occurred while executing the file: {e}")
+# Обрабатываем выбор пользователя
+try:
+    if HackToolChoice == '1':
+        exec(open('Phishing/MainPhishing.py', 'r', encoding='utf-8').read())
 
-elif HackToolChoice == '2':
-    try:
-        with open('PhoneNumberPicker/Hack_phonenember.py', 'r', encoding='utf-8') as file:
-            os.system('cls')
-            exec(file.read())
-    except FileNotFoundError:
-        print("PhoneNumberPicker file not found.")
-    except Exception as e:
-        print(f"An error occurred while executing the file: {e}")
+    elif HackToolChoice == '2':
+        exec(open('PhoneNumberPicker/Hack_phonenember.py', 'r', encoding='utf-8').read())
 
-elif HackToolChoice == '3':
-    try:
-        with open('DDoSAtack/DDoSAtack.py', 'r', encoding='utf-8') as file:
-            os.system('cls')
-            exec(file.read())
-    except FileNotFoundError:
-        print("DDoS Attack file not found.")
-    except Exception as e:
-        print(f"An error occurred while executing the file: {e}")
+    elif HackToolChoice == '3':
+        exec(open('DDoSAtack/DDoSAtack.py', 'r', encoding='utf-8').read())
 
-elif HackToolChoice == '4':
-    try:
-        with open('trojanProgram/SetUpTrojan.py', 'r', encoding='utf-8') as file:
-            os.system('cls')
-            exec(file.read())
-    except FileNotFoundError:
-        print("Trojan Program file not found.")
-    except Exception as e:
-        print(f"An error occurred while executing the file: {e}")
+    elif HackToolChoice == '4':
+        exec(open('trojanProgram/SetUpTrojan.py', 'r', encoding='utf-8').read())
 
-elif HackToolChoice == '5':
-    try:
-        with open('Ip/IpPicker.py', 'r', encoding='utf-8') as file:
-            os.system('cls')
-            exec(file.read())
-    except FileNotFoundError:
-        print("IpPicker file not found.")
-    except Exception as e:
-        print(f"An error occurred while executing the file: {e}")
+    elif HackToolChoice == '5':
+        exec(open('Ip/IpPicker.py', 'r', encoding='utf-8').read())
 
-elif HackToolChoice == '6':
-    sys.exit()
+    elif HackToolChoice == '6':
+        exec(open('qrCodeGenerate/QRGgenerate.py', 'r', encoding='utf-8').read())
 
-else:
-    print("Invalid choice.")
+    elif HackToolChoice == '7':
+        exec(open('UserFinder/FindUser.py', 'r', encoding='utf-8').read())
+
+    elif HackToolChoice == '8':
+        sys.exit()
+
+    else:
+        print(Fore.RED + "Invalid choice." + Style.RESET_ALL)
+
+except FileNotFoundError:
+    print(Fore.RED + "File not found." + Style.RESET_ALL)
+except Exception as e:
+    print(Fore.RED + f"An error occurred: {e}" + Style.RESET_ALL)
