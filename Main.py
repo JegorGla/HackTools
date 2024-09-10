@@ -6,6 +6,14 @@ import sys
 # Инициализируем colorama для поддержки цветового вывода
 init()
 
+# Получение ширины терминала для центрирования
+def get_terminal_size():
+    try:
+        rows, columns = os.popen('stty size', 'r').read().split()
+        return int(columns)
+    except:
+        return 80  # Если не удается получить размер терминала, устанавливаем значение по умолчанию
+
 # Функция для плавного изменения цвета заголовка
 def gradient_color(text):
     colors = [Fore.RED, Fore.YELLOW, Fore.GREEN, Fore.CYAN, Fore.BLUE, Fore.MAGENTA]
@@ -26,13 +34,29 @@ def load_name_from_file(filename="name.txt"):
             return f.read().strip()
     return None
 
-# Функция для отображения главного меню
+# Функция для отображения главного меню с рамкой и центрированием
 def display_menu():
     os.system('cls' if os.name == 'nt' else 'clear')  # Очистка экрана
-    print(gradient_color(pyfiglet.figlet_format("ALL HACKING TOOLS", font='starwars')))
-    print(Fore.GREEN + Style.BRIGHT + "Welcome to the Hacking Tools Menu" + Style.RESET_ALL)
-    print(Fore.CYAN + Style.BRIGHT + "-" * 50 + Style.RESET_ALL)
-    print(Fore.YELLOW + Style.BRIGHT + "Available Tools:" + Style.RESET_ALL)
+    terminal_width = get_terminal_size()  # Ширина терминала
+    border_char = "="
+    border_length = terminal_width - 4
+
+    # Рамка сверху
+    print(Fore.CYAN + border_char * terminal_width + Style.RESET_ALL)
+    
+    # Заголовок с центрированием
+    title = pyfiglet.figlet_format("ALL HACKING TOOLS", font='starwars')
+    for line in title.splitlines():
+        print(gradient_color(line.center(terminal_width)))
+
+    # Рамка снизу заголовка
+    print(Fore.CYAN + border_char * terminal_width + Style.RESET_ALL)
+
+    # Приветственное сообщение с центрированием
+    print(Fore.GREEN + Style.BRIGHT + "Welcome to the Hacking Tools Menu".center(terminal_width) + Style.RESET_ALL)
+    print(Fore.CYAN + Style.BRIGHT + border_char * border_length + Style.RESET_ALL)
+
+    # Список инструментов
     tools = [
         "1 - Phishing tool",
         "2 - PhoneNumber Picker",
@@ -41,11 +65,13 @@ def display_menu():
         "5 - IpPicker",
         "6 - QRCode Generation",
         "7 - Find User",
-        "8 - Exit"
+        "8 - Bruteforce wifi",
+        "9 - Exit"
     ]
     for tool in tools:
-        print(f"    {tool}")
-    print(Fore.CYAN + Style.BRIGHT + "-" * 50 + Style.RESET_ALL)
+        print(f"{tool.center(terminal_width)}")
+    
+    print(Fore.CYAN + Style.BRIGHT + border_char * border_length + Style.RESET_ALL)
 
 # Выводим заголовок и приветственное сообщение
 print(gradient_color(pyfiglet.figlet_format("ALL HACKING TOOLS", font='starwars')))
@@ -90,6 +116,9 @@ try:
         exec(open('UserFinder/FindUser.py', 'r', encoding='utf-8').read())
 
     elif HackToolChoice == '8':
+        exec(open('Brut8forceWifi/WifiHack1.py', 'r', encoding='utf-8').read())
+
+    elif HackToolChoice == '9':
         sys.exit()
 
     else:

