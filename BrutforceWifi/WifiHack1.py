@@ -2,6 +2,7 @@ import pywifi
 from pywifi import const
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
 
 def scan_networks():
     wifi = pywifi.PyWiFi()
@@ -40,6 +41,7 @@ def test_password(ssid, password):
         if iface.status() == const.IFACE_CONNECTED:
             print(f'Success! Password for {ssid} is {password}')
             iface.disconnect()  # Отключение после успешного подключения
+            os.system("exit")
             return True
         else:
             print(f'Failed to connect to {ssid} with password: {password}')

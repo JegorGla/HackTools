@@ -59,7 +59,7 @@ def play_video(video_path):
     video_thread.join()  # Ждем завершения воспроизведения видео
 
 def main():
-    SERVER_IP = load_ip_from_file()  # Замените на IP сервера
+    SERVER_IP = "your_ip"  # Замените на IP сервера
     SERVER_PORT = 5000          # Порт сервера
 
     try:

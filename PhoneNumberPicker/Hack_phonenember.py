@@ -2,6 +2,9 @@ import phonenumbers
 from phonenumbers import geocoder, carrier
 from opencage.geocoder import OpenCageGeocode
 import random
+import requests  # Для проверки через сторонние сервисы
+import os
+import time
 
 # Список кодов мест для Польши
 polish_city_codes = ['12', '22', '42', '52', '61', '71', '81', '91']
@@ -10,7 +13,7 @@ polish_city_codes = ['12', '22', '42', '52', '61', '71', '81', '91']
 russian_city_codes = ['495', '499', '812', '863', '862', '861', '831', '843', '844', '846', '343', '351', '347', '342', '381', '383', '3952', '391', '421', '423', '3462']
 
 def generate_phone_number():
-    # Случайный выбор кода места
+    """Генерация случайного номера для Польши или России."""
     city_code = random.choice(polish_city_codes + russian_city_codes)
     
     if city_code in polish_city_codes:
@@ -22,23 +25,27 @@ def generate_phone_number():
     first_seven_numbers = str(random.randint(1000000, 9999999))
     return f"{country_code}{city_code}{first_seven_numbers}"
 
-def generate_valid_number():
-    # Генерируем случайный номер телефона
-    phone = generate_phone_number()
+def generate_valid_number(api_key, numverify_api_key):
+    """Генерация действительного номера."""
+    while True:
+        phone = generate_phone_number()
 
-    # Проверяем, является ли номер действительным
-    try:
-        check_phone = phonenumbers.parse(phone)
-        if phonenumbers.is_possible_number(check_phone) and phonenumbers.is_valid_number(check_phone):
+        # Проверяем, существует ли номер
+        result = check_number(phone, api_key, numverify_api_key)
+        if "Phone Number" in result:  # Если результат содержит данные о номере
             return phone
         else:
-            return generate_valid_number()
-    except phonenumbers.phonenumberutil.NumberParseException:
-        # Если номер недействителен, генерируем новый
-        return generate_valid_number()
+            print("Generated invalid number, trying again...")
 
-def check_number(phone, api_key):
+def check_number(phone, api_key, numverify_api_key):
+    """Проверка номера телефона на существование."""
     try:
+        # Проверка через NumVerify
+        numverify_result = check_number_with_numverify(phone, numverify_api_key)
+        if "Phone Number" in numverify_result:
+            return numverify_result
+
+        # Если NumVerify не дал результатов, проверяем с помощью OpenCage
         check_phone = phonenumbers.parse(phone)
         number_location = geocoder.description_for_number(check_phone, "en")
         service_provider = carrier.name_for_number(check_phone, "en")
@@ -59,8 +66,24 @@ def check_number(phone, api_key):
     except Exception as e:
         return f"An error occurred: {e}"
 
+def check_number_with_numverify(phone_number, api_key):
+    """Проверка номера через NumVerify API."""
+    url = f"http://apilayer.net/api/validate?access_key={api_key}&number={phone_number}"
+    response = requests.get(url)
+    data = response.json()
+    
+    if data['valid']:
+        return (f"Phone Number: {data['number']}\n"
+                f"Country Code: {data['country_code']}\n"
+                f"Location: {data['location']}\n"
+                f"Carrier: {data['carrier']}\n"
+                f"Line Type: {data['line_type']}")
+    else:
+        return "Phone number is invalid or not found."
+
 def main():
     api_key = input("Please enter your OpenCage API key: ")
+    numverify_api_key = input("Please enter your NumVerify API key: ")
 
     while True:
         print("\nOptions:")
@@ -70,11 +93,13 @@ def main():
         choice = input("Enter your choice (1/2/3): ")
 
         if choice == '1':
-            phone = generate_valid_number()
+            phone = generate_valid_number(api_key, numverify_api_key)
             print(f"Generated Phone Number: {phone}")
+            print("Очистка через 10 секунд")
+            time.sleep(10)
         elif choice == '2':
             phone = input("Enter the phone number to check: ")
-            result = check_number(phone, api_key)
+            result = check_number(phone, api_key, numverify_api_key)
             print(result)
         elif choice == '3':
             print("Exiting the program.")
