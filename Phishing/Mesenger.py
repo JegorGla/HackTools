@@ -35,7 +35,7 @@ def login():
 
     # Определяем текущий путь
     current_path = os.path.abspath(os.path.dirname(__file__))
-    file_path = os.path.join(current_path, 'mesenger_data_user.txt')
+    file_path = os.path.join(current_path, 'UesrData/mesenger_data_user.txt')
     print(f"File path: {file_path}")
 
     # Запись в файл с кодировкой UTF-8
