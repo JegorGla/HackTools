@@ -99,9 +99,9 @@ def main():
 
         # Проверка наличия файла
         if video == "yes" or "y" or "Yes" or "Y":
-            script_path = os.path.join(os.getcwd(), 'WindowsTrojan', 'ClientWindowsWithVideo.py')
+            script_path = os.path.join(os.getcwd(), 'trojanProgram/WindowsTrojan/ClientWindowsWithVideo.py')
         else:
-            script_path = os.path.join(os.getcwd(), 'WindowsTrojan', 'ClientWindowsWithoutVideo.py')
+            script_path = os.path.join(os.getcwd(), 'trojanProgram/WindowsTrojan/ClientWindowsWithoutVideo.py')
 
         if not os.path.isfile(script_path):
             print(f"Файл {script_path} не найден.")

