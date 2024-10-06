@@ -116,7 +116,7 @@ try:
         exec(open('UserFinder/FindUser.py', 'r', encoding='utf-8').read())
 
     elif HackToolChoice == '8':
-        exec(open('Brut8forceWifi/WifiHack1.py', 'r', encoding='utf-8').read())
+        exec(open('BrutforceWifi/WifiMain.py', 'r', encoding='utf-8').read())
 
     elif HackToolChoice == '9':
         sys.exit()
