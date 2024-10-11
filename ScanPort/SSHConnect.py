@@ -67,12 +67,12 @@ if __name__ == "__main__":
         exit(1)
 
     target_ip = sys.argv[1]
-    # port = 22  # Порт для подключения по умолчанию
+    port = 22  # Порт для подключения по умолчанию
 
     # # Проверка, открыт ли порт 22
-    # if not is_port_open(target_ip, port):
-    #     print(f"Порт {port} на {target_ip} закрыт. Попытки подключения по этому порту не будут выполнены.")
-    #     exit(1)
+    if not is_port_open(target_ip, port):
+        print(f"Порт {port} на {target_ip} закрыт. Попытки подключения по этому порту не будут выполнены.")
+        exit(1)
 
     if chose == 'yes':
         # Перебор случайных комбинаций
