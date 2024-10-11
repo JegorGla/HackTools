@@ -66,7 +66,8 @@ def display_menu():
         "6 - QRCode Generation",
         "7 - Find User",
         "8 - Bruteforce wifi",
-        "9 - Exit"
+        "9 - Scan ports",
+        "10 - Exit"
     ]
     for tool in tools:
         print(f"{tool.center(terminal_width)}")
@@ -119,6 +120,9 @@ try:
         exec(open('BrutforceWifi/WifiMain.py', 'r', encoding='utf-8').read())
 
     elif HackToolChoice == '9':
+        exec(open('ScanPort/Scan.py', 'r', encoding='utf-8').read())
+
+    elif HackToolChoice == '10':
         sys.exit()
 
     else:
