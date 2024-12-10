@@ -56,7 +56,7 @@ def write_ngrok_config_linux(authtoken):
 
 def write_ngrok_config_linux(authtoken):
     # Путь к конфигурационному файлу ngrok в Linux
-    ngrok_config_path = os.path.expanduser("~/.ngrok2/ngrok.yml")
+    ngrok_config_path = os.path.expanduser("/root/.config/ngrok/ngrok.yml")
 
     # Структура конфигурации ngrok
     config_data = {

