@@ -7,80 +7,80 @@ from tqdm import tqdm
 import threading
 import time
 import platform
-import yaml
+#import yaml
 
-def write_ngrok_config_windows(authtoken, user):
-    # Путь к конфигурационному файлу ngrok
-    ngrok_config_path = os.path.expanduser(f"C:/Users/{user}/AppData/Local/ngrok/ngrok.yml")
+# def write_ngrok_config_windows(authtoken, user):
+#     # Путь к конфигурационному файлу ngrok
+#     ngrok_config_path = os.path.expanduser(f"C:/Users/{user}/AppData/Local/ngrok/ngrok.yml")
 
-    # Структура конфигурации ngrok
-    config_data = {
-        "version": "2",
-        "authtoken": authtoken,  # Вставьте ваш токен сюда
-        "tunnels": {
-            "http_tunnel": {
-                "proto": "http",
-                "addr": 5000  # Порт для HTTP-туннеля
-            },
-            "tcp_tunnel": {
-                "proto": "tcp",
-                "addr": 12345  # Порт для TCP-туннеля
-            }
-        }
-    }
+#     # Структура конфигурации ngrok
+#     config_data = {
+#         "version": "2",
+#         "authtoken": authtoken,  # Вставьте ваш токен сюда
+#         "tunnels": {
+#             "http_tunnel": {
+#                 "proto": "http",
+#                 "addr": 5000  # Порт для HTTP-туннеля
+#             },
+#             "tcp_tunnel": {
+#                 "proto": "tcp",
+#                 "addr": 12345  # Порт для TCP-туннеля
+#             }
+#         }
+#     }
 
-    # Запись данных в конфигурационный файл ngrok.yml
-    os.makedirs(os.path.dirname(ngrok_config_path), exist_ok=True)
-    with open(ngrok_config_path, "w") as config_file:
-        yaml.dump(config_data, config_file, default_flow_style=False)
+#     # Запись данных в конфигурационный файл ngrok.yml
+#     os.makedirs(os.path.dirname(ngrok_config_path), exist_ok=True)
+#     with open(ngrok_config_path, "w") as config_file:
+#         yaml.dump(config_data, config_file, default_flow_style=False)
     
-    print("Конфигурационный файл ngrok.yml успешно обновлён.")
-    print("Теперь запустите ngrok в новой вкладке используя ngrok start --all")
+#     print("Конфигурационный файл ngrok.yml успешно обновлён.")
+#     print("Теперь запустите ngrok в новой вкладке используя ngrok start --all")
 
-    # # Запускаем ngrok с захватом вывода
-    # process = subprocess.Popen(
-    #     ["ngrok", "start", "--all"],
-    #     stdout=subprocess.PIPE,  # захват стандартного вывода
-    #     stderr=subprocess.PIPE,  # захват ошибок
-    #     text=True  # чтобы вывод был в текстовом формате
-    # )
+#     # # Запускаем ngrok с захватом вывода
+#     # process = subprocess.Popen(
+#     #     ["ngrok", "start", "--all"],
+#     #     stdout=subprocess.PIPE,  # захват стандартного вывода
+#     #     stderr=subprocess.PIPE,  # захват ошибок
+#     #     text=True  # чтобы вывод был в текстовом формате
+#     # )
 
-    # # Чтение и вывод строк из stdout
-    # for line in process.stdout:
-    #     print(line, end="")  # Вывод в реальном времени
-    # # Можно также обрабатывать stderr, если нужно
-    # for line in process.stderr:
-    #     print(f"Ошибка: {line}", end="")
-def write_ngrok_config_linux(authtoken):
-    import yaml
+#     # # Чтение и вывод строк из stdout
+#     # for line in process.stdout:
+#     #     print(line, end="")  # Вывод в реальном времени
+#     # # Можно также обрабатывать stderr, если нужно
+#     # for line in process.stderr:
+#     #     print(f"Ошибка: {line}", end="")
+# def write_ngrok_config_linux(authtoken):
+#     import yaml
 
-def write_ngrok_config_linux(authtoken):
-    # Путь к конфигурационному файлу ngrok в Linux
-    ngrok_config_path = os.path.expanduser("/root/.config/ngrok/ngrok.yml")
+# def write_ngrok_config_linux(authtoken):
+#     # Путь к конфигурационному файлу ngrok в Linux
+#     ngrok_config_path = os.path.expanduser("/root/.config/ngrok/ngrok.yml")
 
-    # Структура конфигурации ngrok
-    config_data = {
-        "version": "2",
-        "authtoken": authtoken,  # Вставьте ваш токен сюда
-        "tunnels": {
-            "http_tunnel": {
-                "proto": "http",
-                "addr": 5000  # Порт для HTTP-туннеля
-            },
-            "tcp_tunnel": {
-                "proto": "tcp",
-                "addr": 12345  # Порт для TCP-туннеля
-            }
-        }
-    }
+#     # Структура конфигурации ngrok
+#     config_data = {
+#         "version": "2",
+#         "authtoken": authtoken,  # Вставьте ваш токен сюда
+#         "tunnels": {
+#             "http_tunnel": {
+#                 "proto": "http",
+#                 "addr": 5000  # Порт для HTTP-туннеля
+#             },
+#             "tcp_tunnel": {
+#                 "proto": "tcp",
+#                 "addr": 12345  # Порт для TCP-туннеля
+#             }
+#         }
+#     }
 
-    # Запись данных в конфигурационный файл ngrok.yml
-    os.makedirs(os.path.dirname(ngrok_config_path), exist_ok=True)
-    with open(ngrok_config_path, "w") as config_file:
-        yaml.dump(config_data, config_file, default_flow_style=False)
+#     # Запись данных в конфигурационный файл ngrok.yml
+#     os.makedirs(os.path.dirname(ngrok_config_path), exist_ok=True)
+#     with open(ngrok_config_path, "w") as config_file:
+#         yaml.dump(config_data, config_file, default_flow_style=False)
     
-    print("Конфигурационный файл ngrok.yml успешно обновлён.")
-    print("Теперь запустите ngrok в новой вкладке.")
+#     print("Конфигурационный файл ngrok.yml успешно обновлён.")
+#     print("Теперь запустите ngrok в новой вкладке.")
 
 def print_commands(os_name, commands):
     print("Доступные команды:")
@@ -136,16 +136,16 @@ def send_keep_alive(client_socket, interval=60):
 def start_server():
     colorama.init(autoreset=True)
     print(Fore.RED + "Не забудьте запустить ngrok и app.py в директории сервера.")
-    if os_name == "Windows":
-        user = os.getlogin()
+    # if os_name == "Windows":
+    #     user = os.getlogin()
 
-        # Запрашиваем authtoken и настраиваем конфигурацию ngrok
-        authtoken = input("Введите ваш authtoken для ngrok: ")
-        write_ngrok_config_windows(authtoken, user)  # Записываем конфиг
+    #     # Запрашиваем authtoken и настраиваем конфигурацию ngrok
+    #     authtoken = input("Введите ваш authtoken для ngrok: ")
+    #     write_ngrok_config_windows(authtoken, user)  # Записываем конфиг
 
-    if os_name == "Linux":
-        authtoken = input("Введите ваш authtoken для ngrok: ")
-        write_ngrok_config_linux(authtoken)  # Записываем конфиг
+    # if os_name == "Linux":
+    #     authtoken = input("Введите ваш authtoken для ngrok: ")
+    #     write_ngrok_config_linux(authtoken)  # Записываем конфиг
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('0.0.0.0', 12345))
