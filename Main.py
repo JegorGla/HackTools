@@ -5,6 +5,7 @@ import sys
 import time
 import threading
 import random
+import shutil
 
 # Инициализируем colorama
 init()
@@ -12,11 +13,10 @@ init()
 # Флаг для остановки эффекта
 train_effect_running = True
 
-# Получение ширины терминала
 def get_terminal_size():
     try:
-        rows, columns = os.popen('stty size', 'r').read().split()
-        return int(columns)
+        columns, rows = shutil.get_terminal_size(fallback=(80, 20))
+        return columns
     except:
         return 80
 
@@ -120,11 +120,11 @@ def hacker_animation():
         "Access granted. Welcome.",
     ]
 
-    for _ in range(3):  # Трижды показываем код
+    for _ in range(1):  # Трижды показываем код
         for line in fake_code:
             print(Fore.GREEN + Style.BRIGHT + f"Executing: {line}" + Style.RESET_ALL)
             time.sleep(random.uniform(0.5, 1.5))  # случайная задержка для эффекта
-
+    os.system("cls" or "clear")
 # Основный цикл программы
 while True:
     # Показать экран загрузки перед входом
@@ -156,7 +156,7 @@ while True:
     display_menu()
 
     # Получаем выбор пользователя
-    HackToolChoice = input('Enter your number: ')
+    HackToolChoice = input('> ')
 
     # Обрабатываем выбор пользователя
     try:

